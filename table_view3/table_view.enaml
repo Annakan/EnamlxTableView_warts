@@ -1,0 +1,85 @@
+import os
+import time
+import random
+from threading import Thread
+from atom.api import (Atom, Unicode, Range, ContainerList, Bool)
+
+from enamlx.widgets.table_view import (
+    TableView, TableViewRow, TableViewItem
+)
+
+from enaml.widgets.api import (
+    Window, Container, PushButton, CheckBox, RadioButton
+)
+from enaml.core.looper import Looper
+from enaml.widgets.spin_box import SpinBox
+from enaml.image import Image
+from enaml.icon import Icon,IconImage
+from enaml.application import deferred_call
+from enaml.widgets.menu import Menu
+from enaml.widgets.action import Action
+#from enamlx.core.looper import ListLooper
+
+from table_model import Person, data_model
+from utils import load_icon
+
+
+enamldef Main(Window):
+    attr model = data_model
+    Container:
+        PushButton:
+            text = 'Add person'
+            clicked :: model.add_persons()
+        PushButton:
+            text = 'Remove person'
+            clicked ::
+#                    model.remove_person()
+#                    model.remove_person(table.selected_rows)
+                    model.remove_persons(table.proxy.widget.selectedIndexes())
+#                    table.looper.refresh_items()
+
+            
+        TableView: table:
+            alias looper : looper
+            minimum_size = (640,360)
+            horizontal_headers << ['#','First','Last','Age','Color']#,str(table.visible_rows)]
+            horizontal_stretch = True
+            items << model.people
+
+            Looper:looper:
+                #: Max number of visible rows
+                #: If this number is too small, stuff will get jacked
+                iterable << range(table.visible_rows)
+                TableViewRow:
+                    ####################################################################################################
+                    # This works in the most ugly of ways
+                    attr person << model.people[min(table.visible_row + loop_index, len(model.people)-1)]
+                    # and we need to protect ourselves because person can **vanish** between the line above and row calculation
+                    row <<  model.people.index(person) if person in model.people else -99999999
+                    # This does not work, sometimes person has vanished from model.people since 2 lines up   !!!
+                    #                    row <<  model.people.index(person)
+                    ######################################################################################################
+
+                    clicked ::
+                            print("Row %s clicked!" % self.row)
+                    TableViewItem:
+                        checkable = True
+                        checked := person.debug
+                        toggled :: print("toggled %s"%self.row)
+                        icon << person.debug and load_icon('bug') or None
+                    TableViewItem:
+                        text := person.first_name
+                    TableViewItem:
+                        text << person.last_name
+                        selected :: print("Selection %s is now %s"%(person.last_name,change['value']))
+                    TableViewItem:
+                        text = 'Loading...'
+#                        editable = True
+#                        # TODO: Delegate widgets Not yet implemented
+#                        SpinBox:
+#                            value := person.age
+                    TableViewItem:
+                        text << str(parent.row)
+                        foreground << parent.row&1 and 'red' or 'blue'
+                        background = 'green'
+                        text_alignment = ('center','top')

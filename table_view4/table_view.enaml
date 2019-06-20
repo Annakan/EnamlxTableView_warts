@@ -1,0 +1,111 @@
+import os
+import time
+import random
+from threading import Thread
+from atom.api import (Atom, Unicode, Range, ContainerList, Bool)
+
+from enamlx.widgets.table_view import (
+    TableView, TableViewRow, TableViewItem
+)
+
+from enaml.widgets.api import (
+    Window, Container, PushButton, CheckBox, RadioButton
+)
+from enaml.core.looper import Looper
+from enaml.widgets.spin_box import SpinBox
+from enaml.image import Image
+from enaml.icon import Icon,IconImage
+from enaml.application import deferred_call
+from enaml.widgets.menu import Menu
+from enaml.widgets.action import Action
+#from enamlx.core.looper import ListLooper
+
+from table_model import Person, data_model
+from table_model import TableSelection, get_selection_info
+
+
+def icon_path(name):
+    path = os.getcwd()
+    return os.path.join(path,'../','images','icons','%s.png'%name)
+
+
+def load_image(name):
+    with open(icon_path(name),'rb') as f:
+        data = f.read()
+    return Image(data=data)
+
+def load_icon(name):
+    img = load_image(name)
+    icg = IconImage(image=img) 
+    return Icon(images=[icg])
+
+
+enamldef Main(Window):
+    attr model = data_model
+    Container:
+        PushButton:
+            text = 'Add person'
+            clicked :: model.add_persons()
+        PushButton:
+            text = 'Remove person(S)'
+            clicked ::
+                    model.remove_person(table.selected_rows)
+                    table.looper.refresh_items()
+
+        TableView: table:
+            alias looper : looper
+            minimum_size = (640,360)
+            horizontal_headers << ['#','First','Last','Age','Color']#,str(table.visible_rows)]
+            horizontal_stretch = True
+            items << model.people
+            # attr max_row << len(model.people)
+#            attr first_row << table.visible_row
+#            attr last_row << min(table.visible_row+table.visible_rows, len(model.people)-1)
+            # the following is nice but not working because no subscription will be taken on the items from the iterable
+            # attr selected_rows << {index for index in (s_index.row() for s_index in self.proxy.widget.selectedIndexes()) }
+            attr selected_rows << {items[index] for index in (s_index.row() for s_index in self.proxy.widget.selectedIndexes()) if index < len(model.people)}
+
+
+            Looper:looper:
+                #: Max number of visible rows
+                #: If this number is too small, stuff will get jacked
+                iterable << model.people[table.visible_row:min(table.visible_row+table.visible_rows, len(model.people))]
+                TableViewRow:
+                    ####################################################################################################
+                    # This works in the most ugly of ways
+                    attr person = loop_item
+                    # and we need to protect ourselves because person can **vanish** between the line above and row calculation
+                    row <<  model.people.index(person)  if person in model.people else -99999999
+                    # the followiwng line does not work
+                    #                    row <<  model.people.index(person)
+                    ######################################################################################################
+
+                    clicked ::
+                            print("Row %s clicked!" % self.row)
+                            print(f"          Enamlx Selection : {self.parent.selection}")
+                            print(f"Underlying widget selection: {self.proxy.widget.selectedIndexes()}" )
+                            print("selected_rows: {}".format(table.selected_rows) )
+
+                    TableViewItem:
+                        checkable = True
+                        checked := person.debug
+                        toggled :: print("toggled %s"%self.row)
+                        icon << person.debug and load_icon('bug') or None
+                    TableViewItem:
+                        text := person.first_name
+                        clicked :: print("Clicked %s"%person.first_name)
+                    TableViewItem:
+                        text << person.last_name
+                        double_clicked :: print("Double clicked %s"%person.last_name)
+                        selected :: print("Selection %s is now %s"%(person.last_name,change['value']))
+                    TableViewItem:
+                        text = 'Loading...'
+#                        editable = True
+#                        # TODO: Delegate widgets Not yet implemented
+#                        SpinBox:
+#                            value := person.age
+                    TableViewItem:
+                        text << str(parent.row)
+                        foreground << parent.row&1 and 'red' or 'blue'
+                        background = 'green'
+                        text_alignment = ('center','top')
