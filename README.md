@@ -19,5 +19,5 @@ Some enamlx TableView properties seems poorly named :
 >    It is convenient that `row` is mappable to a property of the undelying container, making the link between the undelying container and the displayed row. 
 >    For instance when displaying items from a list (an Atom ContainerList) it can be the index in the list.
 >    When the grid is displaying a portion of the underlying container from the 100th element to the 120th, the `row` property for each TableViewRow contains 100, 101, 102   
->    You could also use loop_index to store on the row a reference to the item diplayed.
+>    You could also use loop_index to store in the TableViewRow a reference to the item diplayed, or loop_item to store the objet in the TableViewRow.
 >    Example use both 
