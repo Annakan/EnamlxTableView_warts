@@ -1,5 +1,5 @@
  ## what is this about
-This repos contains both some experiement showing annoying bugs in enamlx TableView and ways to work around then and have a working Qt grid in enaml.
+This repos contains both some experiments showing small bug/warts in enamlx TableView and ways to work around then and have a working Qt grid in enaml.
 
 ## what's in it
 
