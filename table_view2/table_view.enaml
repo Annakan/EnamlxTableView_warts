@@ -43,12 +43,8 @@ enamldef Main(Window):
             attr max_row << len(model.people)
 
             Looper:looper:
-                #: Max number of visible rows
-                #: If this number is too small, stuff will get jacked
                 iterable << range(table.visible_rows)
                 TableViewRow:
-#                    row << table.visible_row+loop_index
-#                    attr person << table.items[self.row]
                     row <<  table.visible_row + loop_index if table.visible_row + loop_index < max_row else -1
                     attr person << model.people[row] if row >=0  else Person()
 

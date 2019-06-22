@@ -21,7 +21,6 @@ from enaml.widgets.action import Action
 #from enamlx.core.looper import ListLooper
 
 from table_model import Person, data_model
-from table_model import TableSelection, get_selection_info
 
 
 def icon_path(name):
@@ -65,7 +64,6 @@ enamldef Main(Window):
             # attr selected_rows << {index for index in (s_index.row() for s_index in self.proxy.widget.selectedIndexes()) }
             attr selected_rows << {items[index] for index in (s_index.row() for s_index in self.proxy.widget.selectedIndexes()) if index < len(model.people)}
 
-
             Looper:looper:
                 #: Max number of visible rows
                 #: If this number is too small, stuff will get jacked
@@ -76,8 +74,6 @@ enamldef Main(Window):
                     attr person = loop_item
                     # and we need to protect ourselves because person can **vanish** between the line above and row calculation
                     row <<  model.people.index(person)  if person in model.people else -99999999
-                    # the followiwng line does not work
-                    #                    row <<  model.people.index(person)
                     ######################################################################################################
 
                     clicked ::

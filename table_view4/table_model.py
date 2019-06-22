@@ -41,9 +41,9 @@ class TableModel(Atom):
 
 
 data_model = TableModel(people=[
-    Person(last_name='Barker-%i'%i,
-           first_name='Bob%i'%i,
+    Person(last_name='Barker-%i' % i,
+           first_name='Bob%i' % i,
            age=i,
-           debug=bool(i&1))
+           debug=bool(i & 1))
     for i in range(10000)  # 10000
 ])
