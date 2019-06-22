@@ -48,8 +48,8 @@ enamldef Main(Window):
         PushButton:
             text = 'Remove person(S)'
             clicked ::
-                    model.remove_person(table.selected_rows)
-                    table.looper.refresh_items()
+                    model.remove_person(table.selected_items)
+#                    table.looper.refresh_items()
 
         TableView: table:
             alias looper : looper
@@ -57,21 +57,20 @@ enamldef Main(Window):
             horizontal_headers << ['#','First','Last','Age','Color']#,str(table.visible_rows)]
             horizontal_stretch = True
             items << model.people
-            # attr max_row << len(model.people)
-#            attr first_row << table.visible_row
-#            attr last_row << min(table.visible_row+table.visible_rows, len(model.people)-1)
-            # the following is nice but not working because no subscription will be taken on the items from the iterable
+            # The following is nice in theroy but not working because no subscription will be taken on the items from the iterable
             # attr selected_rows << {index for index in (s_index.row() for s_index in self.proxy.widget.selectedIndexes()) }
-            attr selected_rows << {items[index] for index in (s_index.row() for s_index in self.proxy.widget.selectedIndexes()) if index < len(model.people)}
+            # The followinng has the same problem but is correct regarding the selection containing reference to element not existing anymore (like after a deletion at the end)
+            # attr selected_rows << {items[index] for index in (s_index.row() for s_index in self.proxy.widget.selectedIndexes()) if index < len(model.people)}
+            # This one has a problem because the the selection is not re-evaluated after the datasted (items) has changed, since the selection stay it now points to non existent items
+            # clearing selection is the wrong answer to this because it would only hide that the selection is not a correct view on the underlying items of the selected rows/collums/cells
+            attr selected_items << {tv_item.parent.person for tv_item in self.selection if tv_item.parent}
 
             Looper:looper:
-                #: Max number of visible rows
-                #: If this number is too small, stuff will get jacked
                 iterable << model.people[table.visible_row:min(table.visible_row+table.visible_rows, len(model.people))]
                 TableViewRow:
                     ####################################################################################################
                     # This works in the most ugly of ways
-                    attr person = loop_item
+                    attr person << loop_item
                     # and we need to protect ourselves because person can **vanish** between the line above and row calculation
                     row <<  model.people.index(person)  if person in model.people else -99999999
                     ######################################################################################################
@@ -80,7 +79,7 @@ enamldef Main(Window):
                             print("Row %s clicked!" % self.row)
                             print(f"          Enamlx Selection : {self.parent.selection}")
                             print(f"Underlying widget selection: {self.proxy.widget.selectedIndexes()}" )
-                            print("selected_rows: {}".format(table.selected_rows) )
+                            print("selected_persons: {}".format(table.selected_items) )
 
                     TableViewItem:
                         checkable = True

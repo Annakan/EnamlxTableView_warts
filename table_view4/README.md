@@ -4,7 +4,7 @@ Here we are looping over the underlying container and that seems more natural
 
 ## Flaws
 
-* `selection` property is completely broken (always off by one, try to CTRL+click disjoint row/cells etc ...)
+* `selection` property is not updated when the item it points too are destroyed ... 
 * The spinner is still obviously broken, uncomment lines 83/84 in the table_view.enaml to see it.
 
 ## Improvements

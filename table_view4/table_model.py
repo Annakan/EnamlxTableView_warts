@@ -30,12 +30,12 @@ class TableModel(Atom):
             person = Person(last_name='Doe-{}'.format(age), first_name='John-{}'.format(age), age=age)
             self.people.insert(0, person)
 
-    def remove_person(self, selection_info=None):
-        print(selection_info)
-        if selection_info:
-            for item in selection_info:
-                if item in self.people:
-                    self.people.remove(item)
+    def remove_person(self, persons=None):
+        print(f"To be removed {persons}")
+        if persons:
+            for person in persons:
+                if person in self.people:
+                    self.people.remove(person)
         else:
             self.people.pop()
 

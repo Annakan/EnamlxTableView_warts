@@ -1,6 +1,6 @@
 atom==0.4.3
 enaml==0.10.3
-enamlx==0.4.1
+enamlx>=0.4.2
 kiwisolver==1.1.0
 ply==3.11
 PyQt5==5.12.2

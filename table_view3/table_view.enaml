@@ -33,8 +33,8 @@ enamldef Main(Window):
         PushButton:
             text = 'Remove person'
             clicked ::
-#                    model.remove_person(table.selected_rows)
-                    model.remove_persons(table.proxy.widget.selectedIndexes())
+#                    model.remove_person(table.selected_items)
+                     model.remove_persons(table.proxy.widget.selectedIndexes())
 
             
         TableView: table:
@@ -43,7 +43,7 @@ enamldef Main(Window):
             horizontal_headers << ['#','First','Last','Age','Color']#,str(table.visible_rows)]
             horizontal_stretch = True
             items << model.people
-            # attr selected_rows << {items[index.row()] for index in self.proxy.widget.selectedIndexes()}
+#            attr selected_items << {tv_item.parent.person for tv_item in Selection}
 
             Looper:looper:
                 iterable << range(table.visible_rows)

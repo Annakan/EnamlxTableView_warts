@@ -58,7 +58,9 @@ enamldef Main(Window):
                     ######################################################################################################
 
                     clicked ::
-                            print("Row %s clicked!" % self.row)
+                           print("Row %s clicked!" % self.row)
+                           print(f"          Enamlx Selection : {self.parent.selection}")
+                           print(f"Underlying widget selection: {self.proxy.widget.selectedIndexes()}" )
 
                     TableViewItem:
                         checkable = True
