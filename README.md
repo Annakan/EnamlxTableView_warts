@@ -3,9 +3,9 @@ This repos contains both some experiments showing small bug/warts in enamlx Tabl
 
 ## what's in it
 
-Directories table_view 2/3/4 contain working programm that show working TableView while supporting deletion, including deletion of currectly "in-view" items and multiple item selection
+Directories table_view2/3/4 contain working programs that show working TableView usages while supporting deletion, including deletion of currectly "in-view" items and multiple item selection.
 
-They contain a small readme that explain the sample the encoutered bugs and the strategy used to work around them.
+They contain a small readme that explain the sample, the encoutered "bugs" and the strategy used to work around them.
 
 ## wishes :)
 
