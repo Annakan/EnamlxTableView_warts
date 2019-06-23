@@ -110,6 +110,7 @@ enamldef Main(Window):
             Looper:
                 #: Max number of visible rows
                 #: If this number is too small, stuff will get jacked
+                print(table.visible_row)
                 iterable << range(table.visible_rows)
                 TableViewRow:
                     row << table.visible_row+loop_index

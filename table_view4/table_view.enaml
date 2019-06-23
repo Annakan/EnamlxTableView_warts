@@ -71,7 +71,7 @@ enamldef Main(Window):
                     ####################################################################################################
                     # This works in the most ugly of ways
                     attr person << loop_item
-                    # and we need to protect ourselves because person can **vanish** between the line above and row calculation
+                    #  # and we need to protect ourselves because index can overstep  its bounds
                     row <<  model.people.index(person)  if person in model.people else -99999999
                     ######################################################################################################
 
